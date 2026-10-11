@@ -286,7 +286,7 @@ export function ReceiptEntry() {
       <div className="grid gap-4 lg:grid-cols-[22rem_minmax(0,1fr)]">
         <Card className="lg:self-start">
           <CardContent className="space-y-3 pt-6 text-sm">
-            <Field label="From">
+            <Field label="From" asLabel={false}>
               <DealerPicker
                 value={dealer}
                 onChange={(d) => {
@@ -462,11 +462,24 @@ export function ReceiptEntry() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+/**
+ * `asLabel={false}` for a picker: a `<label>` forwards every click inside it to its first control,
+ * so picking a dealer would land on the picker's clear button and undo the choice.
+ */
+function Field({
+  label,
+  asLabel = true,
+  children,
+}: {
+  label: string;
+  asLabel?: boolean;
+  children: React.ReactNode;
+}) {
+  const Wrapper = asLabel ? 'label' : 'div';
   return (
-    <label className="block space-y-1">
+    <Wrapper className="block space-y-1">
       <span className="text-xs text-muted-foreground">{label}</span>
       {children}
-    </label>
+    </Wrapper>
   );
 }
