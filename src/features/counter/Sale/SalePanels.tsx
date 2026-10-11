@@ -217,6 +217,15 @@ export function TotalsBox({
               </dd>
             </>
           )}
+          {quote && quote.roundingMinor !== 0 && (
+            <>
+              <dt className="text-muted-foreground">Rounding</dt>
+              <dd className="text-right tabular-nums">
+                {quote.roundingMinor < 0 ? '− ' : '+ '}
+                {money(Math.abs(quote.roundingMinor))}
+              </dd>
+            </>
+          )}
         </dl>
         {canDiscount && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">

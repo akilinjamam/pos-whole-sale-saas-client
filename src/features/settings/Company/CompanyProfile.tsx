@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { usePermission } from '@/hooks/data/useAuth';
+import { usePriceTiers } from '@/hooks/data/usePricing';
 import { useOrg, useUpdateOrg, useUpdateOrgSettings } from '@/hooks/data/useOrg';
 
 import type { OrgPayload, OrgSettings } from '@shared/types';
@@ -41,6 +42,15 @@ const MONTHS = [
   'December',
 ];
 
+/** The rounding steps offered, in minor units. */
+const ROUNDING = [
+  { value: 0, label: 'No rounding' },
+  { value: 50, label: 'To 50 poisha' },
+  { value: 100, label: 'To the whole taka' },
+  { value: 500, label: 'To ৳5' },
+  { value: 1000, label: 'To ৳10' },
+];
+
 const profileSchema = z.object({
   name: z.string().trim().min(1, 'Required').max(120),
   legalName: z.string().trim().max(160).optional(),
@@ -50,6 +60,8 @@ const profileSchema = z.object({
   phone: z.string().trim().max(40).optional(),
   email: z.string().trim().email('Not a valid email address').or(z.literal('')),
   address: z.string().trim().max(500).optional(),
+  invoiceHeaderNote: z.string().trim().max(200).optional(),
+  invoiceFooter: z.string().trim().max(1000).optional(),
   currency: z.string().trim().length(3, 'Three letters, e.g. BDT'),
   timeZone: z.string().trim().min(1, 'Required').max(60),
   fiscalYearStartMonth: z.coerce.number().int().min(1).max(12),
@@ -106,6 +118,8 @@ function CompanyForm({ org }: { org: OrgPayload }) {
       phone: org.phone ?? '',
       email: org.email ?? '',
       address: org.address ?? '',
+      invoiceHeaderNote: org.invoiceHeaderNote ?? '',
+      invoiceFooter: org.invoiceFooter ?? '',
       currency: org.currency,
       timeZone: org.timeZone,
       fiscalYearStartMonth: org.fiscalYearStartMonth,
@@ -121,6 +135,7 @@ function CompanyForm({ org }: { org: OrgPayload }) {
    * from `org` — which is why every flag is sent individually rather than as a batch.
    */
   const [settings, setSettings] = useState<OrgSettings>(org.settings);
+  const { data: tiers } = usePriceTiers({ limit: 100, isActive: true }, canManageSettings);
 
   const onSubmitProfile = form.handleSubmit((values) => {
     // Empty strings become null: the server's schema takes `null` for "not set", and storing ""
@@ -137,6 +152,8 @@ function CompanyForm({ org }: { org: OrgPayload }) {
         phone: blankToNull(values.phone),
         email: blankToNull(values.email),
         address: blankToNull(values.address),
+        invoiceHeaderNote: blankToNull(values.invoiceHeaderNote),
+        invoiceFooter: blankToNull(values.invoiceFooter),
         currency: values.currency.toUpperCase(),
         timeZone: values.timeZone,
         fiscalYearStartMonth: values.fiscalYearStartMonth,
@@ -248,6 +265,24 @@ function CompanyForm({ org }: { org: OrgPayload }) {
               <Field label="Address" error={form.formState.errors.address?.message}>
                 {(props) => <Textarea {...props} {...form.register('address')} rows={2} />}
               </Field>
+
+              <Field
+                label="Invoice header note"
+                hint="One line under the letterhead on every A4 invoice — e.g. “Authorised distributor of …”."
+                error={form.formState.errors.invoiceHeaderNote?.message}
+              >
+                {(props) => <Input {...props} {...form.register('invoiceHeaderNote')} />}
+              </Field>
+
+              <Field
+                label="Invoice footer"
+                hint="At the foot of every A4 invoice: terms, bank details, a thank-you."
+                error={form.formState.errors.invoiceFooter?.message}
+              >
+                {(props) => (
+                  <Textarea {...props} {...form.register('invoiceFooter')} rows={3} />
+                )}
+              </Field>
             </fieldset>
 
             {canEditProfile ? (
@@ -314,17 +349,36 @@ function CompanyForm({ org }: { org: OrgPayload }) {
           />
 
           <div className="grid gap-4 border-t pt-4 sm:grid-cols-2">
-            <NumberSetting
-              key={`round-${settings.roundInvoiceTo}`}
-              label="Round invoices to"
-              help="Minor units. 0 is no rounding; 100 rounds to the whole taka."
-              value={settings.roundInvoiceTo}
-              disabled={!canManageSettings || updateSettings.isPending}
-              onCommit={(next) => {
-                setSettings({ ...settings, roundInvoiceTo: next });
-                updateSettings.mutate({ roundInvoiceTo: next });
-              }}
-            />
+            <div className="space-y-1.5">
+              <label htmlFor="round-to" className="text-sm font-medium">
+                Round invoice totals
+              </label>
+              <Select
+                id="round-to"
+                value={String(settings.roundInvoiceTo)}
+                disabled={!canManageSettings || updateSettings.isPending}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  setSettings({ ...settings, roundInvoiceTo: next });
+                  updateSettings.mutate({ roundInvoiceTo: next });
+                }}
+              >
+                {ROUNDING.some((r) => r.value === settings.roundInvoiceTo) ? null : (
+                  <option value={settings.roundInvoiceTo}>
+                    To {settings.roundInvoiceTo} poisha
+                  </option>
+                )}
+                {ROUNDING.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                To the nearest step, halves up. The difference prints as its own “Rounding”
+                line, so the lines still add up.
+              </p>
+            </div>
 
             <NumberSetting
               key={`terms-${settings.defaultPaymentTermsDays}`}
@@ -346,10 +400,31 @@ function CompanyForm({ org }: { org: OrgPayload }) {
             </p>
           )}
 
-          <p className="border-t pt-4 text-xs text-muted-foreground">
-            The default retail price tier is set here too, from day 11 — once price tiers exist
-            to choose between.
-          </p>
+          <div className="space-y-1.5 border-t pt-4">
+            <label htmlFor="retail-tier" className="text-sm font-medium">
+              Counter price tier
+            </label>
+            <Select
+              id="retail-tier"
+              value={settings.defaultRetailTierId ?? ''}
+              disabled={!canManageSettings || updateSettings.isPending}
+              onChange={(e) => {
+                const next = e.target.value || null;
+                setSettings({ ...settings, defaultRetailTierId: next });
+                updateSettings.mutate({ defaultRetailTierId: next });
+              }}
+            >
+              <option value="">None — each product’s own selling price</option>
+              {(tiers?.items ?? []).map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name} ({t.code})
+                </option>
+              ))}
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              What a walk-in customer pays at the counter. Dealers are priced by their own tier.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

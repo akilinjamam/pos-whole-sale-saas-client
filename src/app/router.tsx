@@ -61,6 +61,9 @@ import {
 import { SalesReportScreen } from '@/features/reports/SalesReportScreen';
 import { DeadStockScreen, StockValuationScreen } from '@/features/reports/StockReports';
 import { InvoicesList } from '@/features/billing/InvoicesList';
+import { AuditLogScreen } from '@/features/settings/Admin/AuditLogScreen';
+import { ImportScreen } from '@/features/settings/Admin/ImportScreen';
+import { NumberingScreen } from '@/features/settings/Admin/NumberingScreen';
 import { CompanyProfile } from '@/features/settings/Company/CompanyProfile';
 import { LocationsList } from '@/features/settings/Locations/LocationsList';
 import { RolesList } from '@/features/settings/Roles/RolesList';
@@ -150,6 +153,10 @@ const SCREEN_ELEMENTS: Record<string, ReactElement> = {
   '/settings/roles': <RolesList />,
   '/settings/locations': <LocationsList />,
   '/settings/company': <CompanyProfile />,
+  '/settings/numbering': <NumberingScreen />,
+  '/settings/audit': <AuditLogScreen />,
+  '/settings/import-stock': <ImportScreen kind="stock" />,
+  '/settings/import-balances': <ImportScreen kind="balances" />,
 };
 
 /** `/settings/users` → `settings/users`, since these are children of the `/` layout route. */

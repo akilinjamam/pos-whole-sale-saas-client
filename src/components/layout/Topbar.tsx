@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { LocationSwitcher } from '@/components/layout/LocationSwitcher';
+import { NotificationBell } from '@/components/layout/NotificationBell';
 import { UserMenu } from '@/components/layout/UserMenu';
 import { Button } from '@/components/ui/button';
 import { moduleForPath, screenForPath } from '@/config/modules';
@@ -83,6 +84,7 @@ export const Topbar = forwardRef<HTMLButtonElement, TopbarProps>(
 
         <div className="flex shrink-0 items-center gap-1">
           <LocationSwitcher />
+          <NotificationBell />
           <UserMenu theme={theme} />
         </div>
       </header>

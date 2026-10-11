@@ -227,6 +227,12 @@ function InvoiceView({ inv, activity }: { inv: InvoicePayload; activity?: Invoic
               {inv.shippingMinor > 0 && (
                 <Row label="Shipping" value={money(inv.shippingMinor)} />
               )}
+              {inv.roundingMinor !== 0 && (
+                <Row
+                  label="Rounding"
+                  value={`${inv.roundingMinor < 0 ? '−' : '+'}${money(Math.abs(inv.roundingMinor))}`}
+                />
+              )}
               <Row label="Total" value={money(inv.grandTotalMinor)} strong />
               <Row label="Paid" value={money(inv.paidMinor)} />
               {inv.creditedMinor > 0 && (

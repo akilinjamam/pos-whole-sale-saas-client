@@ -323,6 +323,9 @@ export const A4Invoice = forwardRef<
       >
         <div>
           <div style={{ fontSize: 22, fontWeight: 700 }}>{org?.legalName || org?.name}</div>
+          {org?.invoiceHeaderNote && (
+            <div style={{ fontStyle: 'italic' }}>{org.invoiceHeaderNote}</div>
+          )}
           {org?.address && <div>{org.address}</div>}
           <div>{[org?.phone, org?.email].filter(Boolean).join(' · ')}</div>
           <div>
@@ -430,6 +433,15 @@ export const A4Invoice = forwardRef<
                 <td style={num}>{money(inv.shippingMinor)}</td>
               </tr>
             )}
+            {inv.roundingMinor !== 0 && (
+              <tr>
+                <td style={cell}>Rounding</td>
+                <td style={num}>
+                  {inv.roundingMinor < 0 ? '−' : ''}
+                  {money(Math.abs(inv.roundingMinor))}
+                </td>
+              </tr>
+            )}
             <tr style={{ fontWeight: 700 }}>
               <td style={cell}>Total</td>
               <td style={num}>{money(inv.grandTotalMinor)}</td>
@@ -455,6 +467,12 @@ export const A4Invoice = forwardRef<
           </tbody>
         </table>
       </div>
+
+      {org?.invoiceFooter && (
+        <div style={{ marginTop: 24, whiteSpace: 'pre-line', fontSize: 11, color: '#333' }}>
+          {org.invoiceFooter}
+        </div>
+      )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 60 }}>
         <div

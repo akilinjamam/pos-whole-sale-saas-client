@@ -24,6 +24,8 @@ export type UpdateOrgBody = Partial<
     | 'email'
     | 'address'
     | 'logoUrl'
+    | 'invoiceHeaderNote'
+    | 'invoiceFooter'
     | 'currency'
     | 'timeZone'
     | 'fiscalYearStartMonth'
