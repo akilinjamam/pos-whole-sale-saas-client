@@ -102,7 +102,7 @@ export function PartyEditor({ role, open, onClose, party, onSaved }: PartyEditor
   const tierOptions = tiers?.items ?? [];
 
   const form = useForm<PartyFormValues>({
-    resolver: zodResolver(partyFormSchema),
+    resolver: zodResolver(partyFormSchema({ isEdit: Boolean(party) })),
     defaultValues: toFormValues(role, party, {
       defaultTermsDays: org?.settings.defaultPaymentTermsDays ?? 30,
     }),

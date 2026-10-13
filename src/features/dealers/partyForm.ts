@@ -150,21 +150,26 @@ export function serverPathToForm(path: string): string {
   return path;
 }
 
-export const partyFormSchema = baseForm.superRefine((values, ctx) => {
-  const schema = values.role === 'DEALER' ? createDealerSchema : createCustomerSchema;
-  // Parsed as a create even when editing: the rules for each field are the same, and the one
-  // difference — `code` — is simply omitted from an edit's body.
-  const result = schema.safeParse(toRequestBody(values, { isEdit: false }));
-  if (result.success) return;
+/**
+ * Parsed as a create even when editing: the rules for each field are the same, and the one
+ * difference — `code` — is omitted from an edit's body, so it must be omitted here too. An
+ * existing party's code is usually a generated `P-#####`, which a *manual* code may not look
+ * like; validating it as one would block every save of an auto-coded party.
+ */
+export const partyFormSchema = ({ isEdit }: ToBodyOptions) =>
+  baseForm.superRefine((values, ctx) => {
+    const schema = values.role === 'DEALER' ? createDealerSchema : createCustomerSchema;
+    const result = schema.safeParse(toRequestBody(values, { isEdit }));
+    if (result.success) return;
 
-  for (const issue of result.error.issues) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: serverPathToForm(issue.path.join('.')).split('.'),
-      message: issue.message,
-    });
-  }
-});
+    for (const issue of result.error.issues) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: serverPathToForm(issue.path.join('.')).split('.'),
+        message: issue.message,
+      });
+    }
+  });
 
 export const emptyAddress: AddressFormValues = {
   label: '',
