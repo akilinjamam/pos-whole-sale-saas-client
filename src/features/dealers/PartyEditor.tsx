@@ -92,7 +92,8 @@ export function PartyEditor({ role, open, onClose, party, onSaved }: PartyEditor
   // The salesperson picker needs `user:read`, which a sales rep does not hold — they see the
   // current assignment as text instead of a list of every account in the company.
   const { data: users } = useUsers(
-    canReadUsers && isDealer ? { limit: 200, isActive: true, sort: 'name' } : { limit: 1 },
+    { limit: 200, isActive: true, sort: 'name' },
+    canReadUsers && isDealer,
   );
 
   const { data: tiers } = usePriceTiers(

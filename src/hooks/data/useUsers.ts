@@ -31,10 +31,11 @@ export const userKeys = {
   detail: (id: string) => [...userKeys.all, 'detail', id] as const,
 };
 
-export function useUsers(params: ListUsersParams) {
+export function useUsers(params: ListUsersParams, enabled = true) {
   return useQuery({
     queryKey: userKeys.list(params),
     queryFn: () => listUsers(params),
+    enabled,
     // Keeps the previous page on screen while the next one loads, so paging does not flash an
     // empty table. The DataTable dims the rows via `isFetching` instead.
     placeholderData: (previous) => previous,
