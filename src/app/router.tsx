@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Outlet, createBrowserRouter } from 'react-router-dom';
 
 import { RequireAuth } from '@/components/guards/RequireAuth';
 import { RequirePermission } from '@/components/guards/RequirePermission';
@@ -10,6 +10,15 @@ import { Login } from '@/features/auth/Login';
 import { ResetPassword } from '@/features/auth/ResetPassword';
 import { Signup } from '@/features/auth/Signup';
 import { VerifyEmail } from '@/features/auth/VerifyEmail';
+import { AdminsPage } from '@/platform/pages/AdminsPage';
+import { PaymentReceipt, PaymentsList } from '@/platform/pages/PaymentsPages';
+import { PlansPage } from '@/platform/pages/PlansPage';
+import { PlatformDashboard } from '@/platform/pages/PlatformDashboard';
+import { PlatformLogin } from '@/platform/pages/PlatformLogin';
+import { TenantDetail } from '@/platform/pages/TenantDetail';
+import { TenantsList } from '@/platform/pages/TenantsList';
+import { PlatformAuthProvider, RequirePlatformAuth } from '@/platform/PlatformAuth';
+import { PlatformShell } from '@/platform/PlatformShell';
 import { CatalogOrganisation } from '@/features/catalog/Organisation/CatalogOrganisation';
 import { ProductsList } from '@/features/catalog/Products/ProductsList';
 import { ReturnsScreen } from '@/features/counter/Returns/ReturnsScreen';
@@ -176,6 +185,37 @@ export const router = createBrowserRouter([
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/reset-password', element: <ResetPassword /> },
   { path: '/verify-email', element: <VerifyEmail /> },
+
+  // The platform-admin area (SaaS phase 5): its own sign-in, session and frame. Nothing here reads
+  // the tenant auth state, and the tenant RequireAuth never wraps it.
+  {
+    path: '/platform',
+    element: (
+      <PlatformAuthProvider>
+        <Outlet />
+      </PlatformAuthProvider>
+    ),
+    children: [
+      { path: 'login', element: <PlatformLogin /> },
+      {
+        element: <RequirePlatformAuth />,
+        children: [
+          {
+            element: <PlatformShell />,
+            children: [
+              { index: true, element: <PlatformDashboard /> },
+              { path: 'tenants', element: <TenantsList /> },
+              { path: 'tenants/:id', element: <TenantDetail /> },
+              { path: 'payments', element: <PaymentsList /> },
+              { path: 'payments/:id', element: <PaymentReceipt /> },
+              { path: 'plans', element: <PlansPage /> },
+              { path: 'admins', element: <AdminsPage /> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 
   {
     element: <RequireAuth />,
