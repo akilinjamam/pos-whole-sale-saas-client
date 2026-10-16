@@ -5,8 +5,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { useAppSelector } from '@/app/store';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { SubscriptionBanner } from '@/components/layout/SubscriptionBanner';
+import { SuspendedScreen } from '@/components/layout/SuspendedScreen';
 import { Topbar } from '@/components/layout/Topbar';
 import { VerifyEmailBanner } from '@/components/layout/VerifyEmailBanner';
+import { useSubscription } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
 
 /** Tailwind's `md`. Below this the sidebar is an off-canvas drawer, not a fixed rail. */
@@ -24,6 +27,7 @@ export function AppShell() {
   const { theme, sidebarCollapsed } = useAppSelector((s) => s.ui);
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const { data: subscription } = useSubscription();
 
   /**
    * Which route the drawer was opened on, or null for closed.
@@ -148,6 +152,7 @@ export function AppShell() {
           navOpen={mobileOpen}
           onOpenNav={() => setOpenedAtPath(location.pathname)}
         />
+        <SubscriptionBanner />
         <VerifyEmailBanner />
 
         {/*
@@ -166,7 +171,11 @@ export function AppShell() {
           transition={{ duration: 0.2, ease: 'easeOut' }}
           className="flex-1 p-4 md:p-6"
         >
-          <Outlet />
+          {subscription?.access === 'BLOCKED' ? (
+            <SuspendedScreen subscription={subscription} />
+          ) : (
+            <Outlet />
+          )}
         </motion.main>
       </div>
     </div>

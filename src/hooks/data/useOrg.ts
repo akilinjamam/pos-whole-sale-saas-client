@@ -1,19 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { toast } from 'sonner';
 
 import {
   dismissOnboarding,
   fetchOnboarding,
   fetchOrg,
+  fetchSubscription,
   updateOrg,
   updateOrgSettings,
 } from '@/api/endpoints/org';
 
 import type { UpdateOrgBody, UpdateOrgSettingsBody } from '@/api/endpoints/org';
+import type { PlanFeature } from '@shared/enums';
 
 export const orgKeys = {
   all: ['org'] as const,
   onboarding: ['org', 'onboarding'] as const,
+  subscription: ['org', 'subscription'] as const,
 };
 
 /** `enabled: false` for chrome that should not ask at all when the user lacks `org:read`. */
@@ -76,4 +80,34 @@ export function useDismissOnboarding() {
     mutationFn: () => dismissOnboarding(),
     onSuccess: (data) => queryClient.setQueryData(orgKeys.onboarding, data),
   });
+}
+
+/**
+ * The business's plan and subscription state (SaaS phase 4). Re-read on focus and every few
+ * minutes, so a business that has just paid — or just run out — sees the change without a reload.
+ */
+export function useSubscription() {
+  return useQuery({
+    queryKey: orgKeys.subscription,
+    queryFn: fetchSubscription,
+    staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+/**
+ * Whether the business's plan includes a feature — for hiding a module the plan leaves out. Never
+ * the thing that protects it: the server refuses with FEATURE_NOT_IN_PLAN either way.
+ *
+ * Until the subscription has loaded, and for a business with no plan, everything is allowed —
+ * hiding the menu and then showing it again would be worse than the rare refusal.
+ */
+export function usePlanFeatures(): (feature: PlanFeature | undefined) => boolean {
+  const { data } = useSubscription();
+  const features = data?.plan?.features;
+  return useCallback(
+    (feature: PlanFeature | undefined) => !feature || !features || features.includes(feature),
+    [features],
+  );
 }

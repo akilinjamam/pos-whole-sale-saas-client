@@ -69,6 +69,7 @@ import { AuditLogScreen } from '@/features/settings/Admin/AuditLogScreen';
 import { ImportScreen } from '@/features/settings/Admin/ImportScreen';
 import { NumberingScreen } from '@/features/settings/Admin/NumberingScreen';
 import { CompanyProfile } from '@/features/settings/Company/CompanyProfile';
+import { SubscriptionScreen } from '@/features/settings/Subscription/SubscriptionScreen';
 import { LocationsList } from '@/features/settings/Locations/LocationsList';
 import { RolesList } from '@/features/settings/Roles/RolesList';
 import { UsersList } from '@/features/settings/Users/UsersList';
@@ -156,6 +157,7 @@ const SCREEN_ELEMENTS: Record<string, ReactElement> = {
   '/settings/users': <UsersList />,
   '/settings/roles': <RolesList />,
   '/settings/locations': <LocationsList />,
+  '/settings/subscription': <SubscriptionScreen />,
   '/settings/company': <CompanyProfile />,
   '/settings/numbering': <NumberingScreen />,
   '/settings/audit': <AuditLogScreen />,

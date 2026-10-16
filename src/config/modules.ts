@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import type { PlanFeature } from '@shared/enums';
 import type { Permission } from '@shared/permissions';
 
 /**
@@ -47,6 +48,8 @@ export interface ModuleDef {
   permission: Permission | null;
   /** The day from WORK-PLAN-DAYS.md on which this module's first screen lands. */
   landsOnDay: number;
+  /** The plan feature the module needs (SaaS phase 4); hidden when the plan leaves it out. */
+  feature?: PlanFeature;
   screens: ModuleScreen[];
 }
 
@@ -178,6 +181,7 @@ export const MODULES: ModuleDef[] = [
   },
   {
     key: 'counter',
+    feature: 'POS',
     label: 'Counter',
     path: '/counter',
     icon: Store,
@@ -274,6 +278,7 @@ export const MODULES: ModuleDef[] = [
   },
   {
     key: 'purchase',
+    feature: 'PURCHASING',
     label: 'Purchase',
     path: '/purchase',
     icon: ClipboardList,
@@ -384,6 +389,7 @@ export const MODULES: ModuleDef[] = [
   },
   {
     key: 'reports',
+    feature: 'REPORTS',
     label: 'Reports',
     path: '/reports',
     icon: Receipt,
@@ -473,6 +479,12 @@ export const MODULES: ModuleDef[] = [
         path: '/settings/locations',
         permission: 'location:read',
         description: 'Warehouses, counters, transit and damage stores',
+      },
+      {
+        label: 'Subscription',
+        path: '/settings/subscription',
+        permission: 'org:read',
+        description: 'Your plan, what it includes, how much of it you use, and how to pay',
       },
       {
         label: 'Company',

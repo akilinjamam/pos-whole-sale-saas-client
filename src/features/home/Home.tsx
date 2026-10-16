@@ -17,6 +17,7 @@ import { MODULES } from '@/config/modules';
 import { money } from '@/features/dealers/creditMath';
 import { useCan } from '@/hooks/data/useAuth';
 import { useDashboard } from '@/hooks/data/useDashboard';
+import { usePlanFeatures } from '@/hooks/data/useOrg';
 import { useAppSelector } from '@/app/store';
 
 import { ApiStatusCard } from './ApiStatusCard';
@@ -34,6 +35,7 @@ import type { ReactNode } from 'react';
 export function Home() {
   const reduceMotion = useReducedMotion();
   const can = useCan();
+  const inPlan = usePlanFeatures();
   const name = useAppSelector((s) => s.auth.user?.name);
   const { data: d, isLoading } = useDashboard();
 
@@ -43,7 +45,9 @@ export function Home() {
     transition: { duration: 0.35, delay: reduceMotion ? 0 : delay, ease: 'easeOut' as const },
   });
 
-  const shortcuts = MODULES.filter((m) => m.path !== '/' && can(m.permission))
+  const shortcuts = MODULES.filter(
+    (m) => m.path !== '/' && can(m.permission) && inPlan(m.feature),
+  )
     .map((m) => ({
       ...m,
       screens: m.screens.filter((s) => can(s.permission) && !s.comingSoon),

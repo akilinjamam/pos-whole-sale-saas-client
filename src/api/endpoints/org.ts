@@ -1,6 +1,11 @@
 import { getData, patchData, postData } from '@/api/client';
 
-import type { OnboardingPayload, OrgPayload, OrgSettings } from '@shared/types';
+import type {
+  OnboardingPayload,
+  OrgPayload,
+  OrgSettings,
+  SubscriptionPayload,
+} from '@shared/types';
 
 /** "The org" is always the caller's own business, taken from their token. No id. */
 /**
@@ -56,4 +61,12 @@ export function fetchOnboarding(): Promise<OnboardingPayload> {
 
 export function dismissOnboarding(): Promise<OnboardingPayload> {
   return postData<OnboardingPayload>('/org/onboarding/dismiss');
+}
+
+/**
+ * Plan, status and usage (SaaS phase 4). Every signed-in user may read it — the banner needs it on
+ * every screen — and it answers even for a read-only or suspended business. Silent: it is chrome.
+ */
+export function fetchSubscription(): Promise<SubscriptionPayload> {
+  return getData<SubscriptionPayload>('/org/subscription', undefined, { silent: true });
 }

@@ -6,7 +6,7 @@ import { useAppDispatch } from '@/app/store';
 import { env } from '@/config/env';
 import { MODULES } from '@/config/modules';
 import { useCan } from '@/hooks/data/useAuth';
-import { useOrg } from '@/hooks/data/useOrg';
+import { useOrg, usePlanFeatures } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
 import { toggleSidebar } from '@/store/uiSlice';
 
@@ -33,10 +33,12 @@ interface VisibleModule extends ModuleDef {
 
 function useVisibleModules(): VisibleModule[] {
   const can = useCan();
+  const inPlan = usePlanFeatures();
 
   return useMemo(
     () =>
-      MODULES.filter((mod) => can(mod.permission))
+      // A module the plan leaves out (SaaS phase 4) is not drawn, as one without permission is not.
+      MODULES.filter((mod) => can(mod.permission) && inPlan(mod.feature))
         .map((mod) => ({
           ...mod,
           permittedScreens: mod.screens.filter((screen) => can(screen.permission)),
@@ -45,7 +47,7 @@ function useVisibleModules(): VisibleModule[] {
         // dashboard and Reports declare no screens at all, so they are judged on their own
         // permission alone.
         .filter((mod) => mod.screens.length === 0 || mod.permittedScreens.length > 0),
-    [can],
+    [can, inPlan],
   );
 }
 
