@@ -6,6 +6,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '@/app/store';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
+import { VerifyEmailBanner } from '@/components/layout/VerifyEmailBanner';
 import { cn } from '@/lib/utils';
 
 /** Tailwind's `md`. Below this the sidebar is an off-canvas drawer, not a fixed rail. */
@@ -147,6 +148,7 @@ export function AppShell() {
           navOpen={mobileOpen}
           onOpenNav={() => setOpenedAtPath(location.pathname)}
         />
+        <VerifyEmailBanner />
 
         {/*
           Route transition — one of the few places motion earns its place.

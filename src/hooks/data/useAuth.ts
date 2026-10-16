@@ -6,8 +6,13 @@ import { errorMessage } from '@/api/client';
 import {
   changePassword as changePasswordRequest,
   fetchMe,
+  forgotPassword as forgotPasswordRequest,
   login as loginRequest,
   logout as logoutRequest,
+  resendVerification as resendVerificationRequest,
+  resetPassword as resetPasswordRequest,
+  signup as signupRequest,
+  verifyEmail as verifyEmailRequest,
 } from '@/api/endpoints/auth';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import {
@@ -19,7 +24,7 @@ import {
   userLoaded,
 } from '@/store/authSlice';
 
-import type { ChangePasswordBody, LoginBody } from '@/api/endpoints/auth';
+import type { ChangePasswordBody, LoginBody, SignupBody } from '@/api/endpoints/auth';
 import type { Permission } from '@shared/permissions';
 
 /**
@@ -131,4 +136,64 @@ export function useCan(): (permission: Permission | null) => boolean {
     const held = new Set<Permission>(permissions ?? []);
     return (permission: Permission | null) => permission === null || held.has(permission);
   }, [permissions]);
+}
+
+// ─── Self-service account flows (SaaS phase 3) ──────────────────────────────────────────
+
+/**
+ * Sign up a new business. Signs the owner in on success, exactly like `useLogin`. A 422 belongs on
+ * the form's fields and a 409 (email taken) is toasted by the axios interceptor, so this raises
+ * no toast of its own.
+ */
+export function useSignup() {
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: (body: SignupBody) => signupRequest(body),
+    onSuccess: (data) => {
+      dispatch(signedIn({ user: data.user, accessToken: data.accessToken }));
+    },
+  });
+}
+
+/**
+ * Follow the link from the verification email. When the person is signed in in this browser, their
+ * profile is re-read so the "verify your email" banner disappears without a reload.
+ */
+export function useVerifyEmail() {
+  const dispatch = useAppDispatch();
+  const signedInNow = useAppSelector((s) => s.auth.status === 'authenticated');
+
+  return useMutation({
+    mutationFn: (token: string) => verifyEmailRequest(token),
+    onSuccess: async () => {
+      if (!signedInNow) return;
+      try {
+        dispatch(userLoaded(await fetchMe()));
+      } catch {
+        // Verified either way; the banner goes on the next profile read.
+      }
+    },
+  });
+}
+
+export function useResendVerification() {
+  return useMutation({
+    mutationFn: () => resendVerificationRequest(),
+    onSuccess: ({ sent }) => {
+      toast.success(
+        sent ? 'Verification email sent — check your inbox' : 'Your email is already verified',
+      );
+    },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({ mutationFn: (email: string) => forgotPasswordRequest(email) });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (body: { token: string; password: string }) => resetPasswordRequest(body),
+  });
 }

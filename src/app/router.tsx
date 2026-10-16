@@ -5,7 +5,11 @@ import { RequirePermission } from '@/components/guards/RequirePermission';
 import { AppShell } from '@/components/layout/AppShell';
 import { ModuleLanding } from '@/components/layout/ModuleLanding';
 import { ALL_SCREENS, MODULES } from '@/config/modules';
+import { ForgotPassword } from '@/features/auth/ForgotPassword';
 import { Login } from '@/features/auth/Login';
+import { ResetPassword } from '@/features/auth/ResetPassword';
+import { Signup } from '@/features/auth/Signup';
+import { VerifyEmail } from '@/features/auth/VerifyEmail';
 import { CatalogOrganisation } from '@/features/catalog/Organisation/CatalogOrganisation';
 import { ProductsList } from '@/features/catalog/Products/ProductsList';
 import { ReturnsScreen } from '@/features/counter/Returns/ReturnsScreen';
@@ -164,6 +168,12 @@ const relative = (path: string) => path.replace(/^\//, '');
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
+  // Signed-out account screens (SaaS phase 3). `verify-email` stays outside RequireAuth on
+  // purpose: the link is often opened on a device where nobody is signed in.
+  { path: '/signup', element: <Signup /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/reset-password', element: <ResetPassword /> },
+  { path: '/verify-email', element: <VerifyEmail /> },
 
   {
     element: <RequireAuth />,

@@ -20,6 +20,7 @@ import { useDashboard } from '@/hooks/data/useDashboard';
 import { useAppSelector } from '@/app/store';
 
 import { ApiStatusCard } from './ApiStatusCard';
+import { OnboardingChecklist } from './OnboardingChecklist';
 import { SalesTrendChart } from './SalesTrendChart';
 
 import type { LucideIcon } from 'lucide-react';
@@ -67,6 +68,8 @@ export function Home() {
             : ' '}
         </p>
       </motion.header>
+
+      <OnboardingChecklist />
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">

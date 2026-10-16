@@ -6,6 +6,7 @@ import { useAppDispatch } from '@/app/store';
 import { env } from '@/config/env';
 import { MODULES } from '@/config/modules';
 import { useCan } from '@/hooks/data/useAuth';
+import { useOrg } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
 import { toggleSidebar } from '@/store/uiSlice';
 
@@ -61,6 +62,10 @@ export function Sidebar({ collapsed, onNavigate, showCollapseToggle = false }: S
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
   const modules = useVisibleModules();
+  // The business's own name once it loads (SaaS phase 3). `fetchOrg` is silent, so a role without
+  // `org:read` simply keeps the product name.
+  const can = useCan();
+  const { data: org } = useOrg(can('org:read'));
 
   return (
     <>
@@ -68,7 +73,9 @@ export function Sidebar({ collapsed, onNavigate, showCollapseToggle = false }: S
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sm font-bold text-white">
           OW
         </div>
-        {!collapsed && <span className="truncate text-sm font-semibold">{env.appName}</span>}
+        {!collapsed && (
+          <span className="truncate text-sm font-semibold">{org?.name ?? env.appName}</span>
+        )}
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-2" aria-label="Modules">

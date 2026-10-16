@@ -1,8 +1,8 @@
-import { getData, patchData } from '@/api/client';
+import { getData, patchData, postData } from '@/api/client';
 
-import type { OrgPayload, OrgSettings } from '@shared/types';
+import type { OnboardingPayload, OrgPayload, OrgSettings } from '@shared/types';
 
-/** V1 is single-tenant: "the org" is the caller's own, taken from their token. No id. */
+/** "The org" is always the caller's own business, taken from their token. No id. */
 /**
  * Silent: screens fetch the company profile in the background for their print letterhead, and a
  * role without `org:read` (a store keeper on a challan) would otherwise get a "no permission" toast
@@ -47,4 +47,13 @@ export type UpdateOrgSettingsBody = Partial<OrgSettings>;
 
 export function updateOrgSettings(body: UpdateOrgSettingsBody): Promise<OrgPayload> {
   return patchData<OrgPayload>('/org/settings', body);
+}
+
+/** The first-steps checklist on the dashboard. Silent for the same reason as `fetchOrg`. */
+export function fetchOnboarding(): Promise<OnboardingPayload> {
+  return getData<OnboardingPayload>('/org/onboarding', undefined, { silent: true });
+}
+
+export function dismissOnboarding(): Promise<OnboardingPayload> {
+  return postData<OnboardingPayload>('/org/onboarding/dismiss');
 }
