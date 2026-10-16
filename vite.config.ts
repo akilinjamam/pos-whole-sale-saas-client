@@ -27,8 +27,8 @@ export default defineConfig({
     cssTarget: ['chrome87', 'edge88', 'firefox78', 'safari14'],
   },
   server: {
-    // 5174, so this runs alongside the retail client on 5173.
-    port: 5174,
+    // 5175, so this runs alongside the retail client (5173) and the original wholesale client (5174).
+    port: 5175,
     strictPort: true,
   },
 });

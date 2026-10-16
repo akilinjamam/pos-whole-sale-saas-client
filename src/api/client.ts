@@ -28,7 +28,7 @@ export const api: AxiosInstance = axios.create({
   timeout: 20_000,
   headers: { Accept: 'application/json' },
   // Required for the refresh flow: the server sets the refresh token as an httpOnly cookie
-  // scoped to /api/v1/auth, and the browser will not send it cross-origin (5174 → 5100)
+  // scoped to /api/v1/auth, and the browser will not send it cross-origin (5175 → 5101)
   // without this. httpOnly is what keeps the long-lived credential out of reach of any XSS
   // on the page, which is why the cookie is preferred over storing it in localStorage.
   withCredentials: true,
