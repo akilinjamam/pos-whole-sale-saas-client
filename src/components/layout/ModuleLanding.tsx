@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { moduleForPath } from '@/config/modules';
+import { WatchTutorialButton } from '@/features/tutorials/WatchTutorialButton';
 import { useCan } from '@/hooks/data/useAuth';
 import { usePlanFeatures } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,11 @@ export function ModuleLanding() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <PageHeader title={mod.label} icon={mod.icon} />
+      <PageHeader
+        title={mod.label}
+        icon={mod.icon}
+        actions={<WatchTutorialButton topic={mod.key} />}
+      />
 
       {screens.length === 0 ? (
         <Card>

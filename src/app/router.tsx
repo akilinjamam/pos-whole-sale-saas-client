@@ -11,6 +11,7 @@ import { ResetPassword } from '@/features/auth/ResetPassword';
 import { Signup } from '@/features/auth/Signup';
 import { VerifyEmail } from '@/features/auth/VerifyEmail';
 import { Privacy, RefundPolicy, Terms } from '@/features/public/Legal';
+import { TutorialsPage } from '@/features/tutorials/TutorialsPage';
 import { AdminsPage } from '@/platform/pages/AdminsPage';
 import { PaymentReceipt, PaymentsList } from '@/platform/pages/PaymentsPages';
 import { PlansPage } from '@/platform/pages/PlansPage';
@@ -18,6 +19,7 @@ import { PlatformDashboard } from '@/platform/pages/PlatformDashboard';
 import { PlatformLogin } from '@/platform/pages/PlatformLogin';
 import { TenantDetail } from '@/platform/pages/TenantDetail';
 import { TenantsList } from '@/platform/pages/TenantsList';
+import { TutorialsPage as PlatformTutorialsPage } from '@/platform/pages/TutorialsPage';
 import { PlatformAuthProvider, RequirePlatformAuth } from '@/platform/PlatformAuth';
 import { PlatformShell } from '@/platform/PlatformShell';
 import { CatalogOrganisation } from '@/features/catalog/Organisation/CatalogOrganisation';
@@ -216,6 +218,7 @@ export const router = createBrowserRouter([
               { path: 'payments', element: <PaymentsList /> },
               { path: 'payments/:id', element: <PaymentReceipt /> },
               { path: 'plans', element: <PlansPage /> },
+              { path: 'tutorials', element: <PlatformTutorialsPage /> },
               { path: 'admins', element: <AdminsPage /> },
             ],
           },
@@ -240,7 +243,10 @@ export const router = createBrowserRouter([
             path: relative(mod.path),
             element: (
               <RequirePermission permission={mod.permission}>
-                {mod.screens.some((s) => !s.comingSoon) ? (
+                {mod.key === 'tutorials' ? (
+                  // Its own page rather than a card grid of screens.
+                  <TutorialsPage />
+                ) : mod.screens.some((s) => !s.comingSoon) ? (
                   <ModuleLanding />
                 ) : (
                   <ModulePlaceholder />

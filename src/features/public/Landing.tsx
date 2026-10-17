@@ -8,6 +8,7 @@ import {
   Mail,
   Minus,
   Phone,
+  PlayCircle,
   ShieldCheck,
   ShoppingCart,
   Store,
@@ -21,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { money } from '@/features/dealers/creditMath';
+import { VideoDialog, VideoThumbnail } from '@/components/common/VideoPlayer';
 import { usePublicSite } from '@/hooks/data/usePublicSite';
 import { cn } from '@/lib/utils';
 
@@ -60,9 +62,12 @@ const PLAN_FEATURES: { key: PlanFeature; label: 'pos' | 'purchasing' | 'reports'
 
 /** `/` for a visitor who is not signed in (SaaS phase 8). Bangla by default; English on request. */
 export function Landing() {
-  const { t, num } = usePublicLang();
+  const { t, num, lang } = usePublicLang();
   usePageMeta(t.meta.title, t.meta.description, { exact: true });
   const { data } = usePublicSite();
+  const [watching, setWatching] = useState(false);
+  const demo = data?.demoVideo ?? null;
+  const demoTitle = demo ? (lang === 'bn' ? demo.titleBn : demo.titleEn) : '';
   const signup = data?.signupEnabled !== false;
   const reduce = useReducedMotion();
   /** The hero's lines arrive one after another on first load. */
@@ -96,9 +101,20 @@ export function Landing() {
                   {t.hero.cta}
                 </Link>
               )}
-              <a href="#pricing" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-                {t.hero.seePricing}
-              </a>
+              {demo ? (
+                <button
+                  type="button"
+                  onClick={() => setWatching(true)}
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
+                >
+                  <PlayCircle aria-hidden="true" />
+                  {t.hero.watchDemo}
+                </button>
+              ) : (
+                <a href="#pricing" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+                  {t.hero.seePricing}
+                </a>
+              )}
             </motion.div>
             {data && signup && (
               <motion.p {...enter(3)} className="text-sm text-muted-foreground">
@@ -109,6 +125,26 @@ export function Landing() {
           <ProductPreview label={t.preview} />
         </div>
       </section>
+
+      {/* Demo video — only once one is published (Platform → Tutorials → Landing page demo). */}
+      {demo && (
+        <section id="demo" className="scroll-mt-16 border-b">
+          <div className="mx-auto max-w-4xl px-4 py-16">
+            <Reveal className="mb-8 space-y-3 text-center">
+              <h2 className="text-3xl font-semibold tracking-tight">{t.demo.title}</h2>
+              <p className="text-muted-foreground">{t.demo.text}</p>
+            </Reveal>
+            <Reveal>
+              <VideoThumbnail
+                youtubeId={demo.youtubeId}
+                title={demoTitle}
+                onPlay={() => setWatching(true)}
+                className="rounded-xl shadow-xl"
+              />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* Features */}
       <section id="features" className="scroll-mt-16">
@@ -158,6 +194,10 @@ export function Landing() {
       <Contact data={data} />
 
       {data?.operator.whatsapp && <WhatsAppButton number={data.operator.whatsapp} />}
+
+      {demo && watching && (
+        <VideoDialog youtubeId={demo.youtubeId} title={demoTitle} onClose={() => setWatching(false)} />
+      )}
 
       {signup && (
         <section className="bg-primary text-primary-foreground">

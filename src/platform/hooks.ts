@@ -1,7 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { pget, ppage, ppatch, ppost } from './api';
+import { pdelete, pget, ppage, ppatch, ppost } from './api';
 
 import type { LimitedResource, OrgStatus, PlanFeature } from '@shared/enums';
 import type {
@@ -15,6 +15,7 @@ import type {
   TenantDetailPayload,
   TenantSummaryPayload,
 } from '@shared/platform';
+import type { TutorialPayload, TutorialTopic } from '@shared/tutorials';
 
 /** Every platform query sits under `['platform', …]`, so signing out drops them all at once. */
 export const platformKeys = {
@@ -26,6 +27,7 @@ export const platformKeys = {
   payment: (id: string) => ['platform', 'payment', id] as const,
   plans: ['platform', 'plans'] as const,
   admins: ['platform', 'admins'] as const,
+  tutorials: ['platform', 'tutorials'] as const,
 };
 
 // ─── Auth ───────────────────────────────────────────────────────────────────────────────
@@ -213,6 +215,52 @@ export function useSavePlan() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: platformKeys.plans });
       toast.success('Plan saved');
+    },
+  });
+}
+
+// ─── Tutorials ──────────────────────────────────────────────────────────────────────────
+
+export function usePlatformTutorials() {
+  return useQuery({
+    queryKey: platformKeys.tutorials,
+    queryFn: () => pget<TutorialPayload[]>('/tutorials'),
+  });
+}
+
+/** What the editor sends. `youtubeId` may be a whole link — the server reads the id out of it. */
+export interface TutorialBody {
+  topic: TutorialTopic;
+  titleBn: string;
+  titleEn: string;
+  descriptionBn: string | null;
+  descriptionEn: string | null;
+  youtubeId: string;
+  sortOrder: number;
+  isPublished: boolean;
+}
+
+export function useSaveTutorial() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string | null; body: TutorialBody }) =>
+      id
+        ? ppatch<TutorialPayload>(`/tutorials/${id}`, body)
+        : ppost<TutorialPayload>('/tutorials', body),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: platformKeys.tutorials });
+      toast.success('Tutorial saved');
+    },
+  });
+}
+
+export function useDeleteTutorial() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => pdelete(`/tutorials/${id}`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: platformKeys.tutorials });
+      toast.success('Tutorial deleted');
     },
   });
 }

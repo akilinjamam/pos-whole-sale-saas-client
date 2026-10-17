@@ -5,6 +5,7 @@ import {
   FileText,
   LayoutDashboard,
   Package,
+  PlayCircle,
   Receipt,
   Settings,
   ShoppingCart,
@@ -16,6 +17,7 @@ import {
 
 import type { PlanFeature } from '@shared/enums';
 import type { Permission } from '@shared/permissions';
+import type { TutorialTopic } from '@shared/tutorials';
 
 /**
  * THE module registry.
@@ -43,7 +45,11 @@ export interface ModuleScreen {
 }
 
 export interface ModuleDef {
-  key: string;
+  /**
+   * Also the module's tutorial topic (`@shared/tutorials`), so the platform admin can file a video
+   * under every module — a module whose key is not a topic is a compile error.
+   */
+  key: TutorialTopic | 'dashboard' | 'tutorials';
   label: string;
   path: string;
   icon: LucideIcon;
@@ -522,6 +528,17 @@ export const MODULES: ModuleDef[] = [
         description: 'What each party owed at cut-over, from a CSV',
       },
     ],
+  },
+  {
+    // Training videos (SaaS phase 8), managed on the platform. Its own page, not a card grid —
+    // routed explicitly in app/router.tsx. Shows only the videos for modules this user can open.
+    key: 'tutorials',
+    label: 'Tutorials',
+    path: '/tutorials',
+    icon: PlayCircle,
+    permission: null,
+    landsOnDay: 0,
+    screens: [],
   },
 ];
 

@@ -92,3 +92,7 @@ export async function ppatch<T>(url: string, body?: unknown): Promise<T> {
   const { data } = await platformApi.patch<ApiSuccess<T>>(url, body);
   return data.data;
 }
+
+export async function pdelete(url: string): Promise<void> {
+  await platformApi.delete(url);
+}

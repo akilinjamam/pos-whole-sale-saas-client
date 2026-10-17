@@ -31,6 +31,7 @@ const PERMISSION_LABEL: Record<PlatformPermission, string> = {
   'platform:billing': 'Payments — record and read',
   'platform:plans': 'Plans — edit prices and limits',
   'platform:admins': 'Admins — add, edit and disable admins',
+  'platform:content': 'Tutorials — the training videos customers see',
 };
 
 /** `/platform/admins` — the people who run the service. */

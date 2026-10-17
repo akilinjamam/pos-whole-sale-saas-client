@@ -288,7 +288,9 @@ export function Privacy() {
             such as whether the side menu is open, and the items in an unfinished counter sale. We
             do not use advertising or tracking cookies, and we do not use analytics services. The
             website loads its font from Google Fonts, which means your browser contacts Google's
-            servers.
+            servers. Training and demo videos are hosted on YouTube: a still picture is shown first,
+            and the video player — YouTube's privacy-enhanced one — loads only when you press
+            play. From then on, YouTube's own privacy policy applies to the video.
           </p>
 
           <h2>4. Who we share it with</h2>

@@ -22,6 +22,7 @@ const NAV: { to: string; label: string; permission: PlatformPermission }[] = [
   { to: '/platform/tenants', label: 'Businesses', permission: 'platform:tenants' },
   { to: '/platform/payments', label: 'Payments', permission: 'platform:billing' },
   { to: '/platform/plans', label: 'Plans', permission: 'platform:plans' },
+  { to: '/platform/tutorials', label: 'Tutorials', permission: 'platform:content' },
   { to: '/platform/admins', label: 'Admins', permission: 'platform:admins' },
 ];
 

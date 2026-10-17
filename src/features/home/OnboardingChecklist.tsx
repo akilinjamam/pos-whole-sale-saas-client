@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { WatchTutorialButton } from '@/features/tutorials/WatchTutorialButton';
 import { useCan } from '@/hooks/data/useAuth';
 import { useDismissOnboarding, useOnboarding } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
@@ -141,6 +142,9 @@ export function OnboardingChecklist() {
             );
           })}
         </ol>
+
+        {/* Draws nothing until a getting-started video is published (Platform → Tutorials). */}
+        <WatchTutorialButton topic="getting-started" label="Watch the getting-started video" />
       </CardContent>
     </Card>
   );

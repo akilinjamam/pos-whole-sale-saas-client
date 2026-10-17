@@ -71,6 +71,7 @@ const en = {
     text: 'Orders, dispatch, invoices, dealer credit and stock — with lots, expiry dates and serial numbers — plus a counter POS that sells from the same shelves.',
     cta: 'Start your free trial',
     seePricing: 'See pricing',
+    watchDemo: 'Watch the demo',
     trialNote: (days: string) => `${days} days free with everything included. No card needed.`,
   },
   features: {
@@ -110,6 +111,10 @@ const en = {
         text: 'Give each person only what they need — a store keeper never sees cost. Every change to prices, rules and numbers is recorded.',
       },
     ],
+  },
+  demo: {
+    title: 'See it working',
+    text: 'A short walk through a day at an optical wholesaler — from a dealer’s order to the money collected.',
   },
   steps: [
     {
@@ -194,6 +199,7 @@ const bn: typeof en = {
     text: 'অর্ডার, ডিসপ্যাচ, ইনভয়েস, ডিলার ক্রেডিট আর স্টক — লট, মেয়াদ ও সিরিয়াল নম্বরসহ — সাথে একটি কাউন্টার পিওএস, যা একই স্টক থেকে বিক্রি করে।',
     cta: 'ফ্রি ট্রায়াল শুরু করুন',
     seePricing: 'মূল্য দেখুন',
+    watchDemo: 'ডেমো দেখুন',
     trialNote: (days: string) => `${days} দিন ফ্রি, সব ফিচারসহ। কোনো কার্ড লাগবে না।`,
   },
   features: {
@@ -233,6 +239,10 @@ const bn: typeof en = {
         text: 'প্রত্যেককে শুধু তার কাজের প্রয়োজনীয় অ্যাক্সেস দিন — স্টোরকিপার কখনো ক্রয়মূল্য দেখেন না। দাম, নিয়ম ও নম্বরের প্রতিটি পরিবর্তন রেকর্ড হয়।',
       },
     ],
+  },
+  demo: {
+    title: 'কাজ করতে দেখুন',
+    text: 'একটি অপটিক্যাল হোলসেল ব্যবসার একটি দিন — ডিলারের অর্ডার থেকে টাকা আদায় পর্যন্ত — সংক্ষেপে।',
   },
   steps: [
     {
