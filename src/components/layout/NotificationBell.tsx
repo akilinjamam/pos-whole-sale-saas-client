@@ -3,6 +3,7 @@ import {
   Bell,
   CalendarClock,
   Clock,
+  CreditCard,
   Info,
   PackageSearch,
   Wallet,
@@ -22,6 +23,7 @@ const ICON: Record<NotificationKind, LucideIcon> = {
   OVERDUE: Wallet,
   LOW_STOCK: PackageSearch,
   APPROVAL: Clock,
+  SUBSCRIPTION: CreditCard,
 };
 
 const TONE: Record<NotificationPayload['severity'], string> = {
