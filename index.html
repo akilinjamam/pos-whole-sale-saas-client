@@ -3,13 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Optical Wholesale</title>
+    <title>Optical Wholesale — wholesale ERP and POS for optical businesses</title>
+    <!-- Defaults for crawlers that do not run JavaScript; public pages refine them (usePageMeta). -->
+    <meta
+      name="description"
+      content="Wholesale orders, dispatch, invoices, dealer credit, stock with lots and serials, and a counter POS — one system for optical wholesalers in Bangladesh. Free trial, no card needed."
+    />
+    <meta name="theme-color" content="#3f51b5" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Optical Wholesale" />
+    <meta property="og:title" content="Optical Wholesale — wholesale ERP and POS for optical businesses" />
+    <meta
+      property="og:description"
+      content="Orders, dispatch, invoices, dealer credit, stock and a counter POS in one system. Free trial."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Inter (and Noto Sans Bengali for Bangla) without blocking the first paint: a `print` stylesheet is fetched but never waited for,
+      and switches to `all` once it has arrived. Until then the page draws in the system font
+      (tailwind.config.ts `fontFamily.sans`), then swaps — on a slow line the page appears at once
+      instead of after the round trip to Google.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

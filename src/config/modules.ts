@@ -38,6 +38,8 @@ export interface ModuleScreen {
   description: string;
   /** Cleared as each screen lands, day by day. */
   comingSoon?: boolean;
+  /** The plan feature this one screen needs, when its module is in every plan. */
+  feature?: PlanFeature;
 }
 
 export interface ModuleDef {
@@ -277,8 +279,9 @@ export const MODULES: ModuleDef[] = [
     ],
   },
   {
+    // In every plan: receiving, supplier bills and payments, returns. Only purchase orders and
+    // reorder suggestions need the plan feature PURCHASING — they carry it per screen.
     key: 'purchase',
-    feature: 'PURCHASING',
     label: 'Purchase',
     path: '/purchase',
     icon: ClipboardList,
@@ -289,6 +292,7 @@ export const MODULES: ModuleDef[] = [
         label: 'Purchase orders',
         path: '/purchase/orders',
         permission: 'po:read',
+        feature: 'PURCHASING',
         description: 'Buying from manufacturers and importers',
       },
       {
@@ -307,6 +311,7 @@ export const MODULES: ModuleDef[] = [
         label: 'Reorder suggestions',
         path: '/purchase/reorder',
         permission: 'po:read',
+        feature: 'PURCHASING',
         description: 'Below the reorder point, net of what is on order',
       },
       {

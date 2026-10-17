@@ -41,6 +41,11 @@ export default {
           DEFAULT: 'hsl(var(--warning))',
           foreground: 'hsl(var(--warning-foreground))',
         },
+        // WhatsApp's brand green — only for the WhatsApp button on the public site.
+        whatsapp: {
+          DEFAULT: 'hsl(var(--whatsapp))',
+          foreground: 'hsl(var(--whatsapp-foreground))',
+        },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
@@ -70,7 +75,9 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        // Noto Sans Bengali after Inter: Inter has no Bangla letters, so the browser takes those
+        // (and only those) from Noto — the public site's Bangla, and Bangla names in the app.
+        sans: ['Inter', 'Noto Sans Bengali', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
         // Tabular figures for money columns — digits must line up in every table.
         numeric: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],

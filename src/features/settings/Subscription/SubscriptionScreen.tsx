@@ -45,7 +45,7 @@ const RESOURCES: { key: LimitedResource; label: string }[] = [
 
 const FEATURES: { key: PlanFeature; label: string }[] = [
   { key: 'POS', label: 'Counter POS' },
-  { key: 'PURCHASING', label: 'Purchasing — orders, goods receipts, supplier returns' },
+  { key: 'PURCHASING', label: 'Purchase orders and reorder suggestions' },
   { key: 'REPORTS', label: 'Report suite' },
 ];
 
@@ -171,7 +171,8 @@ export function SubscriptionScreen() {
           <CardHeader>
             <CardTitle className="text-base">Included</CardTitle>
             <CardDescription>
-              Catalog, stock, dealers, wholesale orders, dispatch, invoices and receivables are
+              Catalog, stock, dealers, wholesale orders, dispatch, invoices, receivables, and
+              receiving from suppliers (goods receipts, supplier bills and payments, returns) are
               in every plan.
             </CardDescription>
           </CardHeader>

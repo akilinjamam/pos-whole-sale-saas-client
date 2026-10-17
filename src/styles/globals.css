@@ -43,6 +43,10 @@
     --warning: 38 92% 50%;
     --warning-foreground: 26 83% 14%;
 
+    /* WhatsApp brand green (#25D366), the same in both themes. */
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 0 0% 100%;
+
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 231 48% 48%;
@@ -90,6 +94,10 @@
 
     --warning: 38 92% 55%;
     --warning-foreground: 26 83% 14%;
+
+    /* WhatsApp brand green (#25D366), the same in both themes. */
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 0 0% 100%;
 
     --border: 217 33% 20%;
     --input: 217 33% 22%;

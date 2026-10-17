@@ -41,7 +41,9 @@ function useVisibleModules(): VisibleModule[] {
       MODULES.filter((mod) => can(mod.permission) && inPlan(mod.feature))
         .map((mod) => ({
           ...mod,
-          permittedScreens: mod.screens.filter((screen) => can(screen.permission)),
+          permittedScreens: mod.screens.filter(
+            (screen) => can(screen.permission) && inPlan(screen.feature),
+          ),
         }))
         // A module whose every screen is out of reach is not a module this user has. The
         // dashboard and Reports declare no screens at all, so they are judged on their own

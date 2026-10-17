@@ -30,7 +30,7 @@ import type { PlatformPlanPayload } from '@shared/platform';
 
 const FEATURE_LABEL: Record<PlanFeature, string> = {
   POS: 'Counter POS',
-  PURCHASING: 'Purchasing',
+  PURCHASING: 'Purchase orders',
   REPORTS: 'Reports',
 };
 const LIMIT_LABEL: Record<LimitedResource, string> = {

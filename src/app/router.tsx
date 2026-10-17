@@ -10,6 +10,7 @@ import { Login } from '@/features/auth/Login';
 import { ResetPassword } from '@/features/auth/ResetPassword';
 import { Signup } from '@/features/auth/Signup';
 import { VerifyEmail } from '@/features/auth/VerifyEmail';
+import { Privacy, RefundPolicy, Terms } from '@/features/public/Legal';
 import { AdminsPage } from '@/platform/pages/AdminsPage';
 import { PaymentReceipt, PaymentsList } from '@/platform/pages/PaymentsPages';
 import { PlansPage } from '@/platform/pages/PlansPage';
@@ -185,6 +186,12 @@ export const router = createBrowserRouter([
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/reset-password', element: <ResetPassword /> },
   { path: '/verify-email', element: <VerifyEmail /> },
+
+  // The public website's legal pages (SaaS phase 8) — open to everyone, signed in or not. The
+  // landing page itself is `/` for a signed-out visitor (see RequireAuth).
+  { path: '/terms', element: <Terms /> },
+  { path: '/privacy', element: <Privacy /> },
+  { path: '/refund-policy', element: <RefundPolicy /> },
 
   // The platform-admin area (SaaS phase 5): its own sign-in, session and frame. Nothing here reads
   // the tenant auth state, and the tenant RequireAuth never wraps it.

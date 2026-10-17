@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { LocationFilter } from '@/features/inventory/LocationFilter';
 import { usePermission } from '@/hooks/data/useAuth';
+import { usePlanFeatures } from '@/hooks/data/useOrg';
 import { useGrns, usePos } from '@/hooks/data/usePurchasing';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { cn, humanise } from '@/lib/utils';
@@ -31,6 +32,7 @@ import type { GoodsReceiptPayload } from '@shared/types';
 export function GoodsReceipts() {
   const navigate = useNavigate();
   const canReceive = usePermission('grn:create');
+  const hasPos = usePlanFeatures()('PURCHASING');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'' | GrnStatus>('');
   const [locationId, setLocationId] = useState('');
@@ -113,7 +115,11 @@ export function GoodsReceipts() {
         description="Receive stock against a purchase order or directly — with lots, expiry and serials."
         actions={
           canReceive && (
-            <Button onClick={() => setChoosing(true)}>
+            <Button
+              // Without purchase orders in the plan there is nothing to receive against: go
+              // straight to a direct receipt rather than asking for POs the server will refuse.
+              onClick={() => (hasPos ? setChoosing(true) : navigate('/purchase/grn/new'))}
+            >
               <Plus aria-hidden="true" />
               Receive goods
             </Button>

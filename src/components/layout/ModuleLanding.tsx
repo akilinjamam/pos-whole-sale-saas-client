@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { moduleForPath } from '@/config/modules';
 import { useCan } from '@/hooks/data/useAuth';
+import { usePlanFeatures } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
 
 /**
@@ -31,12 +32,14 @@ import { cn } from '@/lib/utils';
 export function ModuleLanding() {
   const { pathname } = useLocation();
   const can = useCan();
+  const inPlan = usePlanFeatures();
   const reduceMotion = useReducedMotion();
 
   const mod = moduleForPath(pathname);
   if (!mod) return null;
 
-  const screens = mod.screens.filter((screen) => can(screen.permission));
+  // A screen the plan leaves out is absent, like one the role leaves out.
+  const screens = mod.screens.filter((screen) => can(screen.permission) && inPlan(screen.feature));
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
