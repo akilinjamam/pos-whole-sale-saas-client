@@ -120,7 +120,7 @@ export function TenantDetail() {
             Extend trial
           </Button>
         )}
-        {blocked ? (
+        {t.purgedAt ? null : blocked ? (
           <Button variant="outline" onClick={() => setAction('reactivate')}>
             <RotateCcw aria-hidden="true" />
             Reactivate
@@ -204,6 +204,11 @@ export function TenantDetail() {
               <Item label="Paid until" value={day(t.currentPeriodEndsAt)} />
               {t.dueSince && <Item label="Payment due since" value={day(t.dueSince)} />}
               {t.graceEndsAt && <Item label="Read-only from" value={day(t.graceEndsAt)} />}
+              {t.purgedAt ? (
+                <Item label="Data deleted" value={day(t.purgedAt)} />
+              ) : (
+                t.purgeAfter && <Item label="Data kept until" value={day(t.purgeAfter)} />
+              )}
             </dl>
           </CardContent>
         </Card>

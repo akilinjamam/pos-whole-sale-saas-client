@@ -1,4 +1,4 @@
-import { deleteData, getData, patchData, postData } from '@/api/client';
+import { api, deleteData, getData, patchData, postData } from '@/api/client';
 
 import type { BillingCycle } from '@shared/enums';
 import type {
@@ -85,4 +85,43 @@ export function requestPlan(body: PlanRequestBody): Promise<SubscriptionPayload>
 
 export function withdrawPlanRequest(): Promise<SubscriptionPayload> {
   return deleteData<SubscriptionPayload>('/org/subscription/plan-request');
+}
+
+/**
+ * Every record of the business as a zip (SaaS phase 7). A blob, not the JSON envelope — so it is
+ * silent, and an error (which arrives as a blob too) is read back into a message here.
+ */
+export async function downloadExport(): Promise<{ blob: Blob; filename: string }> {
+  try {
+    const res = await api.get<Blob>('/org/export', {
+      responseType: 'blob',
+      _silent: true,
+    } as Parameters<typeof api.get>[1]);
+    const disposition = String(res.headers['content-disposition'] ?? '');
+    const filename = /filename="([^"]+)"/.exec(disposition)?.[1] ?? 'business-export.zip';
+    return { blob: res.data, filename };
+  } catch (error) {
+    const data = (error as { response?: { data?: unknown } }).response?.data;
+    let message = 'The download failed — try again';
+    if (data instanceof Blob) {
+      try {
+        const body = JSON.parse(await data.text()) as { error?: { message?: string } };
+        message = body.error?.message ?? message;
+      } catch {
+        /* not JSON — keep the generic message */
+      }
+    }
+    throw new Error(message);
+  }
+}
+
+export interface CloseOrgBody {
+  businessName: string;
+  password: string;
+  reason?: string | null;
+}
+
+/** The owner closes the business. Answers with the subscription, now CANCELLED. */
+export function closeOrg(body: CloseOrgBody): Promise<SubscriptionPayload> {
+  return postData<SubscriptionPayload>('/org/close', body);
 }

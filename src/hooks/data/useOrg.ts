@@ -3,7 +3,9 @@ import { useCallback } from 'react';
 import { toast } from 'sonner';
 
 import {
+  closeOrg,
   dismissOnboarding,
+  downloadExport,
   fetchOnboarding,
   fetchOrg,
   fetchSubscription,
@@ -13,7 +15,12 @@ import {
   withdrawPlanRequest,
 } from '@/api/endpoints/org';
 
-import type { PlanRequestBody, UpdateOrgBody, UpdateOrgSettingsBody } from '@/api/endpoints/org';
+import type {
+  CloseOrgBody,
+  PlanRequestBody,
+  UpdateOrgBody,
+  UpdateOrgSettingsBody,
+} from '@/api/endpoints/org';
 import type { PlanFeature } from '@shared/enums';
 
 export const orgKeys = {
@@ -118,6 +125,31 @@ export function useWithdrawPlanRequest() {
       queryClient.setQueryData(orgKeys.subscription, data);
       toast.success('Request withdrawn');
     },
+  });
+}
+
+/** Download every record of the business as a zip, and hand it to the browser. */
+export function useExportData() {
+  return useMutation({
+    mutationFn: downloadExport,
+    onSuccess: ({ blob, filename }) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+      toast.success('Your data has been downloaded');
+    },
+    onError: (error) => toast.error(error.message),
+  });
+}
+
+/** The owner closes the business. The new subscription (CANCELLED) swaps in the closed screen. */
+export function useCloseOrg() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: CloseOrgBody) => closeOrg(body),
+    onSuccess: (data) => queryClient.setQueryData(orgKeys.subscription, data),
   });
 }
 

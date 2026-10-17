@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Ban, LogOut } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useLogout } from '@/hooks/data/useAuth';
+import { ExportButton } from '@/features/settings/Subscription/DataAndClosing';
+import { useLogout, usePermission } from '@/hooks/data/useAuth';
 
 import type { SubscriptionPayload } from '@shared/types';
 
@@ -20,6 +22,10 @@ import type { SubscriptionPayload } from '@shared/types';
 export function SuspendedScreen({ subscription }: { subscription: SubscriptionPayload }) {
   const logout = useLogout();
   const closed = subscription.status === 'CANCELLED';
+  const mayExport = usePermission('org:export');
+  const purgeOn = subscription.purgeAfter
+    ? dayjs(subscription.purgeAfter).format('D MMMM YYYY')
+    : null;
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">
@@ -31,7 +37,9 @@ export function SuspendedScreen({ subscription }: { subscription: SubscriptionPa
           </CardTitle>
           <CardDescription>
             {closed
-              ? 'The business account was closed. Contact support if you need your data.'
+              ? purgeOn
+                ? `The business account was closed. Its data is kept until ${purgeOn}, then deleted for good. Contact support to reopen it before then.`
+                : 'The business account was closed. Contact support if you need your data.'
               : 'Access has been paused by the platform. Your data is safe. Contact support to restore it.'}
           </CardDescription>
         </CardHeader>
@@ -41,6 +49,7 @@ export function SuspendedScreen({ subscription }: { subscription: SubscriptionPa
               {subscription.paymentInstructions}
             </p>
           )}
+          {mayExport && <ExportButton className="w-full" />}
           <Button variant="outline" className="w-full" onClick={() => logout.mutate()}>
             <LogOut aria-hidden="true" />
             Sign out

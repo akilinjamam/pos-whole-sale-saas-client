@@ -21,6 +21,8 @@ import { useCan } from '@/hooks/data/useAuth';
 import { useRequestPlan, useSubscription, useWithdrawPlanRequest } from '@/hooks/data/useOrg';
 import { cn } from '@/lib/utils';
 
+import { DataAndClosing } from './DataAndClosing';
+
 import type { BillingCycle, LimitedResource, OrgStatus, PlanFeature } from '@shared/enums';
 import type { PlanPayload, SubscriptionPayload } from '@shared/types';
 
@@ -220,6 +222,8 @@ export function SubscriptionScreen() {
           </p>
         </CardContent>
       </Card>
+
+      <DataAndClosing data={data} />
     </div>
   );
 }

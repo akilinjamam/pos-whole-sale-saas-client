@@ -25,6 +25,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   NUMBER_SERIES_CHANGE: 'Numbering',
   PLAN_REQUEST: 'Plan requested',
   PLAN_REQUEST_WITHDRAW: 'Plan request withdrawn',
+  DATA_EXPORT: 'Data exported',
+  ORG_CLOSE: 'Business closed',
 };
 
 const show = (v: unknown): string => {
