@@ -102,6 +102,11 @@ export const useCancelTenant = () =>
   useTenantMutation<{ reason: string }>((id) => `/tenants/${id}/cancel`, 'Business closed');
 export const useChangeTenantPlan = () =>
   useTenantMutation<{ planCode: string }>((id) => `/tenants/${id}/plan`, 'Plan changed');
+export const useDismissPlanRequest = () =>
+  useTenantMutation<{ reason: string }>(
+    (id) => `/tenants/${id}/plan-request/dismiss`,
+    'Request dismissed',
+  );
 export const useExtendTrial = () =>
   useTenantMutation<{ days: number }>((id) => `/tenants/${id}/extend-trial`, 'Trial extended');
 

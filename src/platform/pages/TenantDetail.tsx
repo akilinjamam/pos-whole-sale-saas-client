@@ -3,12 +3,13 @@ import {
   ArrowLeft,
   Ban,
   CalendarPlus,
+  Clock,
   CreditCard,
   Layers,
   RotateCcw,
   XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -44,6 +45,7 @@ import {
 import {
   useCancelTenant,
   useChangeTenantPlan,
+  useDismissPlanRequest,
   useExtendTrial,
   usePlatformPlans,
   useReactivateTenant,
@@ -55,7 +57,15 @@ import { usePlatformAuth } from '../platformAuthContext';
 
 import type { TenantDetailPayload } from '@shared/platform';
 
-type Action = 'payment' | 'plan' | 'trial' | 'suspend' | 'reactivate' | 'cancel' | null;
+type Action =
+  | 'payment'
+  | 'plan'
+  | 'trial'
+  | 'suspend'
+  | 'reactivate'
+  | 'cancel'
+  | 'dismiss'
+  | null;
 
 /** `/platform/tenants/:id` — one business: its subscription, usage, payments and history. */
 export function TenantDetail() {
@@ -132,6 +142,46 @@ export function TenantDetail() {
           </Button>
         )}
       </div>
+
+      {t.planRequest && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 py-4">
+            <div className="flex items-start gap-3 text-sm">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <div className="space-y-0.5">
+                <p>
+                  <strong>Plan request:</strong> {t.planRequest.planName},{' '}
+                  {t.planRequest.cycle === 'YEARLY' ? 'paid yearly' : 'paid monthly'}
+                  {t.planRequest.planCode === t.planCode ? ' (their current plan)' : ''} — asked{' '}
+                  {dayTime(t.planRequest.requestedAt)}
+                  {t.planRequest.requestedByName ? ` by ${t.planRequest.requestedByName}` : ''}.
+                </p>
+                {t.planRequest.note && (
+                  <p className="text-muted-foreground">“{t.planRequest.note}”</p>
+                )}
+                <p className="text-muted-foreground">
+                  Recording a payment or changing the plan answers it.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {can('platform:billing') && !blocked && (
+                <Button size="sm" onClick={() => setAction('payment')}>
+                  Record payment
+                </Button>
+              )}
+              {t.planRequest.planCode !== t.planCode && (
+                <Button size="sm" variant="outline" onClick={() => setAction('plan')}>
+                  Switch plan now
+                </Button>
+              )}
+              <Button size="sm" variant="ghost" onClick={() => setAction('dismiss')}>
+                Dismiss
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -237,7 +287,10 @@ export function TenantDetail() {
       {action === 'payment' && <RecordPaymentDialog tenant={t} onClose={close} />}
       {action === 'plan' && <ChangePlanDialog tenant={t} onClose={close} />}
       {action === 'trial' && <ExtendTrialDialog tenant={t} onClose={close} />}
-      {(action === 'suspend' || action === 'reactivate' || action === 'cancel') && (
+      {(action === 'suspend' ||
+        action === 'reactivate' ||
+        action === 'cancel' ||
+        action === 'dismiss') && (
         <ReasonDialog tenant={t} kind={action} onClose={close} />
       )}
     </div>
@@ -286,19 +339,36 @@ function RecordPaymentDialog({
   const record = useRecordPayment();
   const { data: plans } = usePlatformPlans();
   const today = new Date().toISOString().slice(0, 10);
+  // A plan request fills in its plan, its cycle (12 months for yearly) and that price.
+  const request = tenant.planRequest;
+  const yearly = request?.cycle === 'YEARLY';
+  const pricedPlan = request
+    ? (plans?.find((p) => p.code === request.planCode) ??
+      (tenant.plan?.code === request.planCode ? tenant.plan : null))
+    : tenant.plan;
+  const priceOf = (plan: typeof pricedPlan) =>
+    plan ? (yearly ? plan.priceYearlyMinor : plan.priceMonthlyMinor) / 100 : 0;
   const form = useForm<PaymentValues>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
-      amount: tenant.plan ? tenant.plan.priceMonthlyMinor / 100 : 0,
+      amount: priceOf(pricedPlan),
       method: 'BKASH',
       trxId: '',
-      months: 1,
-      planCode: tenant.planCode ?? '',
+      months: yearly ? 12 : 1,
+      planCode: request?.planCode ?? tenant.planCode ?? '',
       paidOn: today,
       note: '',
     },
   });
   const errors = form.formState.errors;
+
+  // The plan list may arrive after the dialog opens; fill the price then, unless already typed.
+  useEffect(() => {
+    if (pricedPlan && !form.getFieldState('amount').isDirty) {
+      form.setValue('amount', priceOf(pricedPlan));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pricedPlan?.code]);
 
   const onSubmit = form.handleSubmit((v) =>
     record.mutate(
@@ -409,7 +479,9 @@ function ChangePlanDialog({
 }) {
   const change = useChangeTenantPlan();
   const { data: plans } = usePlatformPlans();
-  const [planCode, setPlanCode] = useState(tenant.planCode ?? '');
+  const [planCode, setPlanCode] = useState(
+    tenant.planRequest?.planCode ?? tenant.planCode ?? '',
+  );
 
   return (
     <Dialog
@@ -512,6 +584,11 @@ const REASON_COPY = {
     verb: 'Close account',
     help: 'The business is shut out. Their data is kept until it is deleted (phase 7).',
   },
+  dismiss: {
+    title: 'Dismiss the plan request',
+    verb: 'Dismiss',
+    help: 'Nothing else changes. The business sees the request is gone and can ask again.',
+  },
 } as const;
 
 function ReasonDialog({
@@ -520,13 +597,14 @@ function ReasonDialog({
   onClose,
 }: {
   tenant: TenantDetailPayload;
-  kind: 'suspend' | 'reactivate' | 'cancel';
+  kind: 'suspend' | 'reactivate' | 'cancel' | 'dismiss';
   onClose: () => void;
 }) {
   const suspend = useSuspendTenant();
   const reactivate = useReactivateTenant();
   const cancel = useCancelTenant();
-  const mutation = { suspend, reactivate, cancel }[kind];
+  const dismiss = useDismissPlanRequest();
+  const mutation = { suspend, reactivate, cancel, dismiss }[kind];
   const copy = REASON_COPY[kind];
   const [reason, setReason] = useState('');
 
@@ -543,7 +621,7 @@ function ReasonDialog({
             Cancel
           </Button>
           <Button
-            variant={kind === 'reactivate' ? 'default' : 'destructive'}
+            variant={kind === 'reactivate' || kind === 'dismiss' ? 'default' : 'destructive'}
             disabled={reason.trim().length < 3 || mutation.isPending}
             onClick={() =>
               mutation.mutate(

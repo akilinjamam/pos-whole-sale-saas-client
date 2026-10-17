@@ -67,6 +67,33 @@ export function PlatformDashboard() {
         <TenantList title="Payment due" empty="Nobody is overdue." rows={data.overdue} />
       </div>
 
+      {data.planRequests.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Plan requests</CardTitle>
+            <CardDescription>
+              Businesses that chose a plan and are waiting for you to record their payment.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y text-sm">
+              {data.planRequests.map((t) => (
+                <li key={t.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                  <Link to={`/platform/tenants/${t.id}`} className="font-medium hover:underline">
+                    {t.name}
+                  </Link>
+                  <span>
+                    {t.planName ?? 'No plan'} → <strong>{t.planRequest!.planName}</strong>,{' '}
+                    {t.planRequest!.cycle === 'YEARLY' ? 'yearly' : 'monthly'}
+                  </span>
+                  <span className="text-muted-foreground">{day(t.planRequest!.requestedAt)}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
       {can('platform:billing') && (
         <Card>
           <CardHeader>

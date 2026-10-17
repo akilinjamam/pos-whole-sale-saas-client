@@ -137,7 +137,15 @@ export function TenantsList() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>{t.planName ?? 'No plan'}</TableCell>
+                  <TableCell>
+                    {t.planName ?? 'No plan'}
+                    {t.planRequest && (
+                      <div className="text-xs text-primary">
+                        wants {t.planRequest.planName},{' '}
+                        {t.planRequest.cycle === 'YEARLY' ? 'yearly' : 'monthly'}
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <StatusPill
                       status={t.status}

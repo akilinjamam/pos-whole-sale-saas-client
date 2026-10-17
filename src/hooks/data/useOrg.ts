@@ -7,11 +7,13 @@ import {
   fetchOnboarding,
   fetchOrg,
   fetchSubscription,
+  requestPlan,
   updateOrg,
   updateOrgSettings,
+  withdrawPlanRequest,
 } from '@/api/endpoints/org';
 
-import type { UpdateOrgBody, UpdateOrgSettingsBody } from '@/api/endpoints/org';
+import type { PlanRequestBody, UpdateOrgBody, UpdateOrgSettingsBody } from '@/api/endpoints/org';
 import type { PlanFeature } from '@shared/enums';
 
 export const orgKeys = {
@@ -93,6 +95,29 @@ export function useSubscription() {
     staleTime: 60_000,
     refetchInterval: 5 * 60_000,
     refetchOnWindowFocus: true,
+  });
+}
+
+/** Ask for a plan, or take the request back. The response is the whole subscription. */
+export function useRequestPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: PlanRequestBody) => requestPlan(body),
+    onSuccess: (data) => {
+      queryClient.setQueryData(orgKeys.subscription, data);
+      toast.success('Request sent — we will be in touch about payment');
+    },
+  });
+}
+
+export function useWithdrawPlanRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => withdrawPlanRequest(),
+    onSuccess: (data) => {
+      queryClient.setQueryData(orgKeys.subscription, data);
+      toast.success('Request withdrawn');
+    },
   });
 }
 

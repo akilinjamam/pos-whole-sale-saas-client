@@ -23,6 +23,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   ORG_PROFILE_CHANGE: 'Company profile',
   SETTINGS_CHANGE: 'Business rules',
   NUMBER_SERIES_CHANGE: 'Numbering',
+  PLAN_REQUEST: 'Plan requested',
+  PLAN_REQUEST_WITHDRAW: 'Plan request withdrawn',
 };
 
 const show = (v: unknown): string => {

@@ -1,5 +1,6 @@
-import { getData, patchData, postData } from '@/api/client';
+import { deleteData, getData, patchData, postData } from '@/api/client';
 
+import type { BillingCycle } from '@shared/enums';
 import type {
   OnboardingPayload,
   OrgPayload,
@@ -69,4 +70,19 @@ export function dismissOnboarding(): Promise<OnboardingPayload> {
  */
 export function fetchSubscription(): Promise<SubscriptionPayload> {
   return getData<SubscriptionPayload>('/org/subscription', undefined, { silent: true });
+}
+
+export interface PlanRequestBody {
+  planCode: string;
+  cycle: BillingCycle;
+  note?: string | null;
+}
+
+/** Ask the platform for a plan. Nothing changes until the payment is recorded. */
+export function requestPlan(body: PlanRequestBody): Promise<SubscriptionPayload> {
+  return postData<SubscriptionPayload>('/org/subscription/plan-request', body);
+}
+
+export function withdrawPlanRequest(): Promise<SubscriptionPayload> {
+  return deleteData<SubscriptionPayload>('/org/subscription/plan-request');
 }
