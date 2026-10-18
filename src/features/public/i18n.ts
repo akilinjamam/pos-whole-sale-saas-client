@@ -67,7 +67,7 @@ const en = {
     startTrialShort: 'Free trial',
   },
   hero: {
-    title: 'Run your optical wholesale business from one place here',
+    title: 'Run your optical wholesale business from one place',
     text: 'Orders, dispatch, invoices, dealer credit and stock — with lots, expiry dates and serial numbers — plus a counter POS that sells from the same shelves.',
     cta: 'Start your free trial',
     seePricing: 'See pricing',
