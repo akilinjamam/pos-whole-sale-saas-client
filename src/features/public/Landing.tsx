@@ -111,7 +111,10 @@ export function Landing() {
                   {t.hero.watchDemo}
                 </button>
               ) : (
-                <a href="#pricing" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+                <a
+                  href="#pricing"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
+                >
                   {t.hero.seePricing}
                 </a>
               )}
@@ -196,7 +199,11 @@ export function Landing() {
       {data?.operator.whatsapp && <WhatsAppButton number={data.operator.whatsapp} />}
 
       {demo && watching && (
-        <VideoDialog youtubeId={demo.youtubeId} title={demoTitle} onClose={() => setWatching(false)} />
+        <VideoDialog
+          youtubeId={demo.youtubeId}
+          title={demoTitle}
+          onClose={() => setWatching(false)}
+        />
       )}
 
       {signup && (
@@ -204,7 +211,10 @@ export function Landing() {
           <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-14 text-center">
             <h2 className="text-3xl font-semibold tracking-tight">{t.cta.title}</h2>
             <p className="max-w-xl opacity-90">{t.cta.text}</p>
-            <Link to="/signup" className={cn(buttonVariants({ size: 'lg', variant: 'secondary' }))}>
+            <Link
+              to="/signup"
+              className={cn(buttonVariants({ size: 'lg', variant: 'secondary' }))}
+            >
               {t.hero.cta}
             </Link>
           </Reveal>
@@ -225,14 +235,21 @@ function Pricing({ data }: { data: PublicSitePayload | undefined }) {
         <Reveal className="mx-auto mb-8 max-w-2xl space-y-3 text-center">
           <h2 className="text-3xl font-semibold tracking-tight">{t.pricing.title}</h2>
           <p className="text-muted-foreground">{t.pricing.text}</p>
-          <div className="inline-flex rounded-md border p-0.5" role="group" aria-label={t.pricing.billing}>
+          <div
+            className="inline-flex rounded-md border p-0.5"
+            role="group"
+            aria-label={t.pricing.billing}
+          >
             {(['MONTHLY', 'YEARLY'] as const).map((c) => (
               <button
                 key={c}
                 type="button"
                 aria-pressed={cycle === c}
                 onClick={() => setCycle(c)}
-                className={buttonVariants({ size: 'sm', variant: cycle === c ? 'default' : 'ghost' })}
+                className={buttonVariants({
+                  size: 'sm',
+                  variant: cycle === c ? 'default' : 'ghost',
+                })}
               >
                 {c === 'MONTHLY' ? t.pricing.monthly : t.pricing.yearly}
               </button>
@@ -297,7 +314,9 @@ function Pricing({ data }: { data: PublicSitePayload | undefined }) {
                       <li key={key} className="flex justify-between gap-2">
                         <span className="text-muted-foreground">{t.pricing[label]}</span>
                         <span className="font-medium tabular-nums">
-                          {plan.limits[key] === null ? t.pricing.unlimited : num(plan.limits[key]!)}
+                          {plan.limits[key] === null
+                            ? t.pricing.unlimited
+                            : num(plan.limits[key]!)}
                         </span>
                       </li>
                     ))}
@@ -313,9 +332,15 @@ function Pricing({ data }: { data: PublicSitePayload | undefined }) {
                       return (
                         <li
                           key={key}
-                          className={cn('flex items-center gap-2', !included && 'text-muted-foreground')}
+                          className={cn(
+                            'flex items-center gap-2',
+                            !included && 'text-muted-foreground',
+                          )}
                         >
-                          <Icon className={cn('h-4 w-4 shrink-0', included && 'text-primary')} aria-hidden="true" />
+                          <Icon
+                            className={cn('h-4 w-4 shrink-0', included && 'text-primary')}
+                            aria-hidden="true"
+                          />
                           {t.pricing[label]}
                           <span className="sr-only">
                             {included ? t.pricing.included : t.pricing.notIncluded}
@@ -327,7 +352,10 @@ function Pricing({ data }: { data: PublicSitePayload | undefined }) {
                   {data.signupEnabled && (
                     <Link
                       to="/signup"
-                      className={cn(buttonVariants({ variant: trial ? 'default' : 'outline' }), 'mt-auto')}
+                      className={cn(
+                        buttonVariants({ variant: trial ? 'default' : 'outline' }),
+                        'mt-auto',
+                      )}
                     >
                       {t.pricing.startTrial}
                     </Link>
@@ -395,13 +423,13 @@ function ProductPreview({ label }: { label: string }) {
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, x: 40, scale: 0.97 }}
-      animate={reduce ? { opacity: 1 } : { opacity: 1, x: 0, scale: 1, y: [0, -6, 0] }}
+      animate={reduce ? { opacity: 1 } : { opacity: 1, x: 0, scale: 1, y: [0, -15, 0] }}
       transition={{
         opacity: { duration: 0.6, delay: 0.2 },
         x: { duration: 0.6, ease: 'easeOut', delay: 0.2 },
         scale: { duration: 0.6, ease: 'easeOut', delay: 0.2 },
         // After it lands, a slow drift — enough to feel alive, not enough to distract.
-        y: { duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 },
+        y: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 },
       }}
       className="overflow-hidden rounded-xl border bg-card shadow-xl"
       role="img"
@@ -415,7 +443,11 @@ function ProductPreview({ label }: { label: string }) {
       <div className="flex" lang="en">
         <div className="hidden w-14 flex-col items-center gap-3 bg-sidebar py-4 text-sidebar-foreground sm:flex">
           {[ShoppingCart, Truck, Wallet, Boxes, Users, CreditCard].map((Icon, i) => (
-            <Icon key={i} className={cn('h-4 w-4', i === 0 ? 'opacity-100' : 'opacity-50')} aria-hidden="true" />
+            <Icon
+              key={i}
+              className={cn('h-4 w-4', i === 0 ? 'opacity-100' : 'opacity-50')}
+              aria-hidden="true"
+            />
           ))}
         </div>
         <div className="flex-1 space-y-4 p-4">
