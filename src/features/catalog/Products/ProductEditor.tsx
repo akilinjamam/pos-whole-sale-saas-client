@@ -266,6 +266,7 @@ export function ProductEditor({ open, onClose, product }: ProductEditorProps) {
                 {...form.register('barcode')}
                 className="font-mono"
                 autoComplete="off"
+                disabled
               />
             )}
           </Field>
