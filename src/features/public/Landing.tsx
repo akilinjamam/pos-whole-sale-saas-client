@@ -35,6 +35,7 @@ import { WhatsAppButton } from './WhatsAppButton';
 import type { BillingCycle, LimitedResource, PlanFeature } from '@shared/enums';
 import type { PublicSitePayload } from '@shared/types';
 import type { LucideIcon } from 'lucide-react';
+import { useSecretCode } from '@/hooks/useSecretCode';
 
 /** The icons of the eight feature cards, in the order of `t.features.items`. */
 const FEATURE_ICONS: LucideIcon[] = [
@@ -63,6 +64,7 @@ const PLAN_FEATURES: { key: PlanFeature; label: 'pos' | 'purchasing' | 'reports'
 /** `/` for a visitor who is not signed in (SaaS phase 8). Bangla by default; English on request. */
 export function Landing() {
   const { t, num, lang } = usePublicLang();
+  useSecretCode();
   usePageMeta(t.meta.title, t.meta.description, { exact: true });
   const { data } = usePublicSite();
   const [watching, setWatching] = useState(false);

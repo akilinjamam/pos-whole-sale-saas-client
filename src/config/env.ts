@@ -18,4 +18,5 @@ export const env = {
   currencySymbol: import.meta.env.VITE_CURRENCY_SYMBOL ?? '৳',
   timezone: import.meta.env.VITE_TZ ?? 'Asia/Dhaka',
   isDev: import.meta.env.DEV,
+  pss: import.meta.env.VITE_PSS,
 } as const;

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -78,6 +78,15 @@ export function PlatformLogin() {
             <ShieldCheck aria-hidden="true" />
           )}
           Sign in
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+          Back to Home
         </Button>
       </form>
     </AuthLayout>
