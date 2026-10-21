@@ -30,12 +30,10 @@ const count = z.number().int('Whole numbers only').min(0, 'Cannot be negative');
 
 export const productFormSchema = z
   .object({
-    sku: z
-      .string()
-      .trim()
-      .min(1, 'Required')
-      .max(40)
-      .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, 'Letters, digits, dot, dash and underscore'),
+    sku: z.string().trim(),
+    // .min(1, 'Required')
+    // .max(40),
+    // .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, 'Letters, digits, dot, dash and underscore'),
     name: z.string().trim().min(1, 'Required').max(160),
     type: z.enum(PRODUCT_TYPES),
 

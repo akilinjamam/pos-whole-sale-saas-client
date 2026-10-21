@@ -206,12 +206,7 @@ export function ProductEditor({ open, onClose, product }: ProductEditorProps) {
             )}
           </Field>
 
-          <Field
-            label="SKU"
-            required
-            error={errors.sku?.message}
-            hint="Unique across the catalogue."
-          >
+          <Field label="SKU" error={errors.sku?.message} hint="Unique across the catalogue.">
             {(props) => (
               <Input
                 {...props}
@@ -219,6 +214,7 @@ export function ProductEditor({ open, onClose, product }: ProductEditorProps) {
                 className="font-mono uppercase"
                 placeholder="FRM-0001"
                 autoComplete="off"
+                disabled
               />
             )}
           </Field>
